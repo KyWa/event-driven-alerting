@@ -1,0 +1,20 @@
+# On OpenShift, this lives in the Secret "alertmanager-main" in the "openshift-monitoring" namespace
+global:
+  resolve_timeout: 5m
+receivers:
+- name: Webhooks
+  webhook_configs:
+  - send_resolved: false
+    url: "https://el-event-driven-alerts.events.svc.cluster.local:8080"
+- name: Default
+route:
+  group_by:
+  - namespace
+  group_interval: 5m
+  group_wait: 30s
+  receiver: Default
+  repeat_interval: 12h
+  routes:
+  - receiver: Webhooks
+    matchers:
+      - alertname=~"KubeJobFailed"
