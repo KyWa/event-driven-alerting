@@ -1,0 +1,28 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: kube-job-failed
+spec:
+  params:
+  - name: alertname
+    type: string
+  - name: namespace
+    type: string
+  - name: job
+    type: string
+  - name: summary
+    type: string
+  tasks:
+  - name: kube-job-failed
+    taskRef:
+      name: echo-alert
+    params:
+    - name: alertname
+      value: "$(params.alertname)"
+    - name: namespace
+      value: "$(params.namespace)"
+    - name: job
+      value: "$(params.job)"
+    - name: summary
+      value: "$(params.summary)"

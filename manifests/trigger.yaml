@@ -1,0 +1,19 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: Trigger
+metadata:
+  name: kube-job-failed
+spec:
+  serviceAccountName: pipeline
+  bindings:
+  - kind: TriggerBinding
+    ref: kube-job-failed
+  interceptors:
+  - params:
+    - name: "filter"
+      value: "body.alerts.exists(a, a.labels.alertname == 'KubeJobFailed')"
+    ref:
+      kind: ClusterInterceptor
+      name: cel
+  template:
+    ref: kube-job-failed

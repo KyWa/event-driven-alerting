@@ -1,0 +1,9 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: alertmanager-event-listener
+spec:
+  serviceAccountName: pipeline
+  triggers:
+  - triggerRef: kube-job-failed
