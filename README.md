@@ -7,6 +7,8 @@ Technologies used:
 ## Goal
 Have `AlertManager` send alerts to a webhook run by an `EventListener` through OpenShift Pipelines to act upon OpenShift/Kubernetes events.
 
+Bonus points/thought: Include an "if it cant fix it, open a ticket to a support team" following this guide/doc: https://www.redhat.com/en/blog/itsm-prometheus-alerts
+
 ## Example Alert from AlertManager
 ```json
 {
