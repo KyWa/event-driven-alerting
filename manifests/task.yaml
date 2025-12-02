@@ -9,8 +9,6 @@ spec:
     type: string
   - name: namespace
     type: string
-  - name: job
-    type: string
   - name: summary
     type: string
   steps:
@@ -20,6 +18,6 @@ spec:
       #!/bin/bash
       echo "Alert Triggered"
       echo ""
-      echo "Alert $(params.alertname) has been found in $(params.namespace) for this Job: $(params.job)"
+      echo "Alert $(params.alertname) has been found in $(params.namespace)"
       echo ""
       echo "Alert Summary for alert $(params.alertname): $(params.summary)"

@@ -1,13 +1,17 @@
 # Event Driven Tekton
 Technologies used:
+- OpenShift/Kubernetes
 - OpenShift Pipelines (Tekton)
 - Prometheus (AlertManager)
-- OpenShift/Kubernetes
 
 ## Goal
 Have `AlertManager` send alerts to a webhook run by an `EventListener` through OpenShift Pipelines to act upon OpenShift/Kubernetes events.
 
 Bonus points/thought: Include an "if it cant fix it, open a ticket to a support team" following this guide/doc: https://www.redhat.com/en/blog/itsm-prometheus-alerts
+
+## Prerequisites
+Operator: OpenShift Pipelines
+Testing in this assumes using the namespace `events`
 
 ## Example Alert from AlertManager
 ```json
@@ -32,3 +36,37 @@ Bonus points/thought: Include an "if it cant fix it, open a ticket to a support 
   "value": "1e+00"
 }
 ```
+
+## Presentation Examples
+### Image Pull Failures
+Image failing to pull for an operator in the `openshift-marketplace` namespace. We can have a `Task` that will check the events of that Job to do some of the following:
+- If image pull because timeout or something similar, Do XYZ
+- else; delete Job to clear Alert
+
+### Monitor the Monitoring System | AlertManager Health
+Look for the `AlertmanagerClusterFailedToSendAlerts` alert
+
+### KubePodNotReady
+TODO
+
+### `IngressWithoutClassName`
+OpenShift can create usable `Routes` from an `Ingress` object, but must follow the required configuration of having the `.spec.ingressClassName` set to either `public` or `openshift-default`.
+
+Idea:
+- oc patch `ingress` -n namespace .spec.ingressClassName == openshift-default
+- check for `Route` with matching Host to confirm it exists (pre / post)
+
+## Findings/Notes
+Get alerts from cluster via:
+```sh
+oc -n openshift-monitoring exec -c prometheus prometheus-k8s-0 -- curl -s 'http://localhost:9090/api/v1/alerts' > alerts.json
+```
+
+Not all `alerts` have the same `labels` so be sure to verify which labels you are keying off of for your templates. `kube-state-metrics` is what houses/applies the various labels based on the topic: https://github.com/kubernetes/kube-state-metrics/tree/main/docs/metrics/workload
+
+AlertManager Config can just have all Alerts send and not call them out specifically to allow triggering to be moved "up" in the stack. Alongside this, the `EventListener` can have additional `Triggers` appended to it as the requirements/needs grow.
+
+Need a `Trigger` for each alert to go act upon a specific alert to be able to call a specific pipeline
+- maybe find a way to trim this down so its not duplication of efforts
+
+`.labels.resource` will show what `kind` it was (if present of course)

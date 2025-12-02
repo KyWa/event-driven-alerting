@@ -6,4 +6,4 @@ metadata:
 spec:
   serviceAccountName: pipeline
   triggers:
-  - triggerRef: kube-job-failed
+  - triggerRef: watchdog-example

@@ -2,14 +2,12 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
-  name: kube-job-failed
+  name: watchdog-example
 spec:
   params:
   - name: alertname
     value: "$(body.alerts[0].labels.alertname)"
   - name: namespace
     value: "$(body.alerts[0].labels.namespace)"
-  - name: job
-    value: "$(body.alerts[0].labels.job_name)"
   - name: summary
     value: "$(body.alerts[0].annotations.summary)"

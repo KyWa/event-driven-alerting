@@ -5,7 +5,7 @@ receivers:
 - name: Webhooks
   webhook_configs:
   - send_resolved: false
-    url: "https://el-event-driven-alerts.events.svc.cluster.local:8080"
+    url: "http://el-event-driven-alerts.events.svc.cluster.local:8080"
 - name: Default
 route:
   group_by:
@@ -16,5 +16,6 @@ route:
   repeat_interval: 12h
   routes:
   - receiver: Webhooks
-    matchers:
-      - alertname=~"KubeJobFailed"
+# Comment below sections if testing the Watchdog alert
+#    matchers:
+#      - severity!="info"

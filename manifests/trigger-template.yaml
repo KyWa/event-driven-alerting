@@ -2,27 +2,24 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
-  name: kube-job-failed
+  name: watchdog-example
 spec:
   params:
   - name: alertname
   - name: namespace
-  - name: job
   - name: summary
   resourcetemplates:
   - apiVersion: tekton.dev/v1
     kind: PipelineRun
     metadata:
-      generateName: kube-job-failed-
+      generateName: watchdog-example-
     spec:
       pipelineRef:
-        name: kube-job-failed
+        name: watchdog-example
       params:
       - name: alertname
         value: "$(tt.params.alertname)"
       - name: namespace
         value: "$(tt.params.namespace)"
-      - name: job
-        value: "$(tt.params.job)"
       - name: summary
         value: "$(tt.params.summary)"
