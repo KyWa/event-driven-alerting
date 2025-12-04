@@ -1,4 +1,4 @@
-# Event Driven Tekton
+# BO1048 - Automated Event Handling with OpenShift Pipelines
 Technologies used:
 - OpenShift/Kubernetes
 - OpenShift Pipelines (Tekton)
