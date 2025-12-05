@@ -1,0 +1,24 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: alertmanager-failure
+spec:
+  params:
+  - name: alertname
+    type: string
+  - name: namespace
+    type: string
+  - name: summary
+    type: string
+  tasks:
+  - name: alertmanager-failure
+    taskRef:
+      name: alertmanager-failure
+    params:
+    - name: alertname
+      value: "$(params.alertname)"
+    - name: namespace
+      value: "$(params.namespace)"
+    - name: summary
+      value: "$(params.summary)"

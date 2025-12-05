@@ -1,0 +1,24 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: ingressclass-failure
+spec:
+  params:
+  - name: alertname
+    type: string
+  - name: namespace
+    type: string
+  - name: summary
+    type: string
+  tasks:
+  - name: ingressclass-failure
+    taskRef:
+      name: echo-alert
+    params:
+    - name: alertname
+      value: "$(params.alertname)"
+    - name: namespace
+      value: "$(params.namespace)"
+    - name: summary
+      value: "$(params.summary)"

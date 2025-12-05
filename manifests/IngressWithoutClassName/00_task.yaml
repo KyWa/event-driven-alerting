@@ -1,0 +1,23 @@
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: ingressclass-failure
+spec:
+  params:
+  - name: alertname
+    type: string
+  - name: namespace
+    type: string
+  - name: summary
+    type: string
+  steps:
+  - name: echo
+    image: registry.access.redhat.com/ubi9/ubi
+    script: |
+      #!/bin/bash
+      echo "Alert Triggered"
+      echo ""
+      echo "Alert $(params.alertname) has been found in $(params.namespace)"
+      echo ""
+      echo "Alert Summary for alert $(params.alertname): $(params.summary)"

@@ -37,6 +37,29 @@ Testing in this assumes using the namespace `events`
 }
 ```
 
+## Example AlertManager Config
+On OpenShift, this lives in the Secret `alertmanager-main` in the `openshift-monitoring` namespace:
+
+```yaml
+global:
+  resolve_timeout: 5m
+receivers:
+- name: Webhooks
+  webhook_configs:
+  - send_resolved: false
+    url: "http://el-event-driven-alerts.events.svc.cluster.local:8080"
+- name: Default
+route:
+  group_by:
+  - namespace
+  group_interval: 5m
+  group_wait: 30s
+  receiver: Default
+  repeat_interval: 12h
+  routes:
+  - receiver: Webhooks
+```
+
 ## Presentation Examples
 ### Image Pull Failures
 Image failing to pull for an operator in the `openshift-marketplace` namespace. We can have a `Task` that will check the events of that Job to do some of the following:

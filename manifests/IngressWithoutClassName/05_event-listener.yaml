@@ -2,8 +2,8 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
-  name: alertmanager-event-listener
+  name: ingressclass-failure
 spec:
   serviceAccountName: pipeline
   triggers:
-  - triggerRef: EMPTY
+  - triggerRef: ingressclass-failure

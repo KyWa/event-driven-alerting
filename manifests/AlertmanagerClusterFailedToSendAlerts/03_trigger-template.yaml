@@ -1,0 +1,25 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: alertmanager-failure
+spec:
+  params:
+  - name: alertname
+  - name: namespace
+  - name: summary
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1
+    kind: PipelineRun
+    metadata:
+      generateName: alertmanager-failure-
+    spec:
+      pipelineRef:
+        name: alertmanager-failure
+      params:
+      - name: alertname
+        value: "$(tt.params.alertname)"
+      - name: namespace
+        value: "$(tt.params.namespace)"
+      - name: summary
+        value: "$(tt.params.summary)"

@@ -1,0 +1,25 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: ingressclass-failure
+spec:
+  params:
+  - name: alertname
+  - name: namespace
+  - name: summary
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1
+    kind: PipelineRun
+    metadata:
+      generateName: ingressclass-failure-
+    spec:
+      pipelineRef:
+        name: ingressclass-failure
+      params:
+      - name: alertname
+        value: "$(tt.params.alertname)"
+      - name: namespace
+        value: "$(tt.params.namespace)"
+      - name: summary
+        value: "$(tt.params.summary)"

@@ -1,0 +1,19 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: Trigger
+metadata:
+  name: ingressclass-failure
+spec:
+  serviceAccountName: pipeline
+  bindings:
+  - kind: TriggerBinding
+    ref: ingressclass-failure
+  interceptors:
+  - params:
+    - name: "filter"
+      value: "body.alerts.exists(a, a.labels.alertname == 'IngressWithoutClassName')"
+    ref:
+      kind: ClusterInterceptor
+      name: cel
+  template:
+    ref: ingressclass-failure
