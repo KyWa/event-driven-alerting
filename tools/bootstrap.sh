@@ -11,7 +11,8 @@ create_events_ns(){
 }
 
 configure_alertmanager(){
-  oc apply -f ../manifests/alertmanager-main.yaml
+  ALERTMANAGER_CONFIG=`echo -n "$(cat ../manifests/alertmanager-main.yaml)" | base64 -w0`
+  oc patch secret -n openshift-monitoring alertmanager-main --type=merge -p '{"data":{"alertmanager.yaml":"'${ALERTMANAGER_CONFIG}'"}}'
 }
 
 setup_events_ns(){

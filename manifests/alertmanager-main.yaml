@@ -1,45 +1,30 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: alertmanager-main
-  namespace: openshift-monitoring
-type: Opaque
-stringData:
-  alertmanager.yaml:
-    global:
-      resolve_timeout: 5m
-    receivers:
-    - name: Catchall
-      webhook_configs:
-      - send_resolved: false
-        url: "http://el-alertmanager-event-listener.events.svc.cluster.local:8080"
-    - name: Watchdog
-      webhook_configs:
-      - send_resolved: false
-        url: "http://el-watchdog-example.events.svc.cluster.local:8080"
-    - name: AlertmanagerClusterFailedToSendAlerts
-      webhook_configs:
-      - send_resolved: false
-        url: "http://el-alertmanager-failure.events.svc.cluster.local:8080"
-    - name: IngressWithoutClassName
-      webhook_configs:
-      - send_resolved: false
-        url: "http://el-ingressclass-failure.events.svc.cluster.local:8080"
-    - name: Default
-    route:
-      group_by:
-      - namespace
-      group_interval: 5m
-      group_wait: 30s
-      receiver: Default
-      repeat_interval: 12h
-      routes:
-      - receiver: AlertmanagerClusterFailedToSendAlerts
-        matchers:
-        - alertname = AlertmanagerClusterFailedToSendAlerts
-      - receiver: IngressWithoutClassName
-        matchers:
-        - alertname = IngressWithoutClassName
-      - receiver: Watchdog
-        matchers:
-        - alertname = Watchdog
+global:
+  resolve_timeout: 5m
+receivers:
+- name: Catchall
+  webhook_configs:
+  - send_resolved: false
+    url: "http://el-alertmanager-event-listener.events.svc.cluster.local:8080"
+- name: AlertmanagerClusterFailedToSendAlerts
+  webhook_configs:
+  - send_resolved: false
+    url: "http://el-alertmanager-failure.events.svc.cluster.local:8080"
+- name: IngressWithoutClassName
+  webhook_configs:
+  - send_resolved: false
+    url: "http://el-ingressclass-failure.events.svc.cluster.local:8080"
+- name: Default
+route:
+  group_by:
+  - namespace
+  group_interval: 5m
+  group_wait: 30s
+  receiver: Default
+  repeat_interval: 12h
+  routes:
+  - receiver: AlertmanagerClusterFailedToSendAlerts
+    matchers:
+    - alertname = AlertmanagerClusterFailedToSendAlerts
+  - receiver: IngressWithoutClassName
+    matchers:
+    - alertname = IngressWithoutClassName
