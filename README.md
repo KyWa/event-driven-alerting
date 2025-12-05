@@ -62,6 +62,8 @@ Get alerts from cluster via:
 oc -n openshift-monitoring exec -c prometheus prometheus-k8s-0 -- curl -s 'http://localhost:9090/api/v1/alerts' > alerts.json
 ```
 
+Alerts that are pending may be the best candidate to act upon as those alerts have been triggered, but haven't met the next check for if it is really an issue or not. Info here on the "for" clause: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
+
 Not all `alerts` have the same `labels` so be sure to verify which labels you are keying off of for your templates. `kube-state-metrics` is what houses/applies the various labels based on the topic: https://github.com/kubernetes/kube-state-metrics/tree/main/docs/metrics/workload
 
 AlertManager Config can just have all Alerts send and not call them out specifically to allow triggering to be moved "up" in the stack. Alongside this, the `EventListener` can have additional `Triggers` appended to it as the requirements/needs grow.
