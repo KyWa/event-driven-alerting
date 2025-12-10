@@ -69,6 +69,12 @@ Image failing to pull for an operator in the `openshift-marketplace` namespace. 
 ### Monitor the Monitoring System | AlertManager Health
 Look for the `AlertmanagerClusterFailedToSendAlerts` alert
 
+### ArgoCDSyncAlert - User
+Sometimes when changing helm charts or repos, argo may fail to sync and just needs to be forced
+
+### TargetDown
+metric pod bounces
+
 ### KubePodNotReady
 TODO
 
@@ -78,6 +84,10 @@ OpenShift can create usable `Routes` from an `Ingress` object, but must follow t
 Idea:
 - oc patch `ingress` -n namespace .spec.ingressClassName == openshift-default
 - check for `Route` with matching Host to confirm it exists (pre / post)
+
+### User Workload Actions
+Users with custom alertrules for their applications, can utilize this to have openshift pipelines go and "do something" inside the cluster without the need for external systems.
+- move away from app needing to know "what to do when X happens"
 
 ## Findings/Notes
 Get alerts from cluster via:
