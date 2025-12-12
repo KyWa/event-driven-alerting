@@ -126,3 +126,42 @@ Need a `Trigger` for each alert to go act upon a specific alert to be able to ca
 - maybe find a way to trim this down so its not duplication of efforts
 
 `.labels.resource` will show what `kind` it was (if present of course)
+
+## Tekton YAML
+```yaml
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: alertmanager-listener
+spec:
+  serviceAccountName: pipeline
+  triggers:
+  - triggerRef: example-trigger
+  
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: example-template
+spec:
+  params:
+  - name: alertname
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1
+    kind: PipelineRun
+    metadata:
+      generateName: example-
+    spec:
+      pipelineRef:
+        name: example-pipeline
+      params:
+      - name: alertname
+        value: "$(tt.params.alertname)"
+        
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: watchdog-example
+spec:
+  params:
+  - name: alertname
+    value: "$(body.alerts[0].labels.alertname)"
