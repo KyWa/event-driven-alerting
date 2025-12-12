@@ -134,7 +134,6 @@ kind: EventListener
 metadata:
   name: alertmanager-listener
 spec:
-  serviceAccountName: pipeline
   triggers:
   - triggerRef: example-trigger
   
@@ -160,8 +159,27 @@ spec:
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
-  name: watchdog-example
+  name: example-binding
 spec:
   params:
   - name: alertname
     value: "$(body.alerts[0].labels.alertname)"
+    
+apiVersion: triggers.tekton.dev/v1beta1
+kind: Trigger
+metadata:
+  name: example-trigger
+spec:
+  bindings:
+  - kind: TriggerBinding
+    ref: example-binding
+  interceptors:
+  - params:
+    - name: "filter"
+      value: "body.alerts.exists(a, a.labels.alertname == 'KubeJobFailed')"
+    ref:
+      kind: ClusterInterceptor
+      name: cel
+  template:
+    ref: example-template
+```
