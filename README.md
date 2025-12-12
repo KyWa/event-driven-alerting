@@ -13,27 +13,44 @@ Bonus points/thought: Include an "if it cant fix it, open a ticket to a support 
 Operator: OpenShift Pipelines
 Testing in this assumes using the namespace `events`
 
-## Example Alert from AlertManager
+## Example Alerts from AlertManager
 ```json
 {
   "labels": {
-    "alertname": "KubeJobFailed",
-    "condition": "true",
-    "container": "kube-rbac-proxy-main",
-    "endpoint": "https-main",
-    "job": "kube-state-metrics",
-    "job_name": "fa8004602e11c23123aaoijdppl2310",
-    "namespace": "openshift-marketplace",
-    "service": "kube-state-metrics",
+    "alertname": "PodDisruptionBudgetAtLimit",
+    "namespace": "some-namespace",
+    "poddisruptionbudget": "some-poddisruptionbudget",
     "severity": "warning"
   },
   "annotations": {
-    "description": "Job openshift-marketplace/fa8004602e11c23123aaoijdppl2310 failed to complete. Removing failed job after investigation should clear this alert.",
-    "summary": "Job failed to complete"
+    "description": "The pod disruption budget is at the minimum disruptions allowed level. The number of current healthy pods is equal to the desired healthy pods.",
+    "runbook_url": "https://github.com/openshift/runbooks/blob/master/alerts/cluster-kube-controller-manager-operator/PodDisruptionBudgetAtLimit.md",
+    "summary": "The pod disruption budget is preventing further disruption to pods."
   },
   "state": "firing",
-  "activeAt": "2025-07-14T18:09:14.270840147Z",
+  "activeAt": "2025-12-12T14:11:25.403750311Z",
   "value": "1e+00"
+}
+```
+
+Below is targeting a Service (which was a StatefulSet)
+```json
+{
+  "labels": {
+    "alertname": "TargetDown",
+    "job": "alertmanager-metrics",
+    "namespace": "open-cluster-management-observability",
+    "service": "alertmanager-metrics",
+    "severity": "warning"
+  },
+  "annotations": {
+    "description": "100% of the alertmanager-metrics/alertmanager-metrics targets in open-cluster-management-observability namespace have been unreachable for more than 15 minutes. This may be a symptom of network connectivity issues, down nodes, or failures within these components. Assess the health of the infrastructure and nodes running these targets and then contact support.",
+    "runbook_url": "https://github.com/openshift/runbooks/blob/master/alerts/cluster-monitoring-operator/TargetDown.md",
+    "summary": "Some targets were not reachable from the monitoring server for an extended period of time."
+  },
+  "state": "firing",
+  "activeAt": "2025-10-29T00:58:32.286756891Z",
+  "value": "1e+02"
 }
 ```
 
@@ -74,6 +91,10 @@ Sometimes when changing helm charts or repos, argo may fail to sync and just nee
 
 ### TargetDown
 metric pod bounces
+
+### PodDisruptionBudgetLimit / PodDisruptionBudgetAtLimit
+Patch PDB if triggered
+This rule doesn't appear in a fresh HCP cluster in the `openshift-kube-controller-manager-operator` namespace
 
 ### KubePodNotReady
 TODO

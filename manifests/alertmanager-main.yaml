@@ -1,18 +1,14 @@
 global:
   resolve_timeout: 5m
 receivers:
-- name: Catchall
+- name: PodDisruptionBudgetAtLimit
   webhook_configs:
   - send_resolved: false
-    url: "http://el-alertmanager-event-listener.events.svc.cluster.local:8080"
-- name: AlertmanagerClusterFailedToSendAlerts
+    url: "http://el-pdb-fixer.events.svc.cluster.local:8080"
+- name: TargetDown
   webhook_configs:
   - send_resolved: false
-    url: "http://el-alertmanager-failure.events.svc.cluster.local:8080"
-- name: IngressWithoutClassName
-  webhook_configs:
-  - send_resolved: false
-    url: "http://el-ingressclass-failure.events.svc.cluster.local:8080"
+    url: "http://el-metrics-target-fixer.events.svc.cluster.local:8080"
 - name: Default
 route:
   group_by:
@@ -22,9 +18,10 @@ route:
   receiver: Default
   repeat_interval: 12h
   routes:
-  - receiver: AlertmanagerClusterFailedToSendAlerts
+  - receiver: PodDisruptionBudgetAtLimit
     matchers:
-    - alertname = AlertmanagerClusterFailedToSendAlerts
-  - receiver: IngressWithoutClassName
+    - alertname=PodDisruptionBudgetAtLimit
+      namespace!="openshift-"
+  - receiver: TargetDown
     matchers:
-    - alertname = IngressWithoutClassName
+    - alertname=TargetDown
