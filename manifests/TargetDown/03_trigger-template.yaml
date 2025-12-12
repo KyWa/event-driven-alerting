@@ -1,0 +1,25 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: metrics-target-fixer
+spec:
+  params:
+  - name: alertname
+  - name: namespace
+  - name: service
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1
+    kind: PipelineRun
+    metadata:
+      generateName: metrics-target-fixer-
+    spec:
+      pipelineRef:
+        name: metrics-target-fixer
+      params:
+      - name: alertname
+        value: "$(tt.params.alertname)"
+      - name: namespace
+        value: "$(tt.params.namespace)"
+      - name: service
+        value: "$(tt.params.service)"

@@ -1,0 +1,24 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: pdb-fixer
+spec:
+  params:
+  - name: alertname
+    type: string
+  - name: namespace
+    type: string
+  - name: pdbname
+    type: string
+  tasks:
+  - name: pdb-fixer
+    taskRef:
+      name: pdb-fixer
+    params:
+    - name: alertname
+      value: "$(params.alertname)"
+    - name: namespace
+      value: "$(params.namespace)"
+    - name: pdbname
+      value: "$(params.pdbname)"

@@ -1,0 +1,24 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: metrics-target-fixer
+spec:
+  params:
+  - name: alertname
+    type: string
+  - name: namespace
+    type: string
+  - name: service
+    type: string
+  tasks:
+  - name: metrics-target-fixer
+    taskRef:
+      name: metrics-target-fixer
+    params:
+    - name: alertname
+      value: "$(params.alertname)"
+    - name: namespace
+      value: "$(params.namespace)"
+    - name: service
+      value: "$(params.service)"

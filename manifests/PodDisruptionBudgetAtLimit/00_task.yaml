@@ -1,0 +1,22 @@
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: pdb-fixer
+spec:
+  params:
+  - name: alertname
+    type: string
+  - name: namespace
+    type: string
+  - name: pdbname
+    type: string
+  steps:
+  - name: echo
+    image: registry.access.redhat.com/ubi9/ubi
+    script: |
+      #!/bin/bash
+      echo "Alert Triggered for $(params.alertname) in the $(params.namespace) namespace!"
+      echo ""
+      echo "Patching PodDisruptionBudget $(params.pdbname) to prevent inability to perform cluster maintenance"
+      oc patch pdb -n $(params.namespace) '{"spec":{"minAvailable":X}}'
