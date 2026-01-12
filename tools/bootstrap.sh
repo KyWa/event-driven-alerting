@@ -36,6 +36,10 @@ setup_events_ns(){
       echo "Deploying for IngressWithoutClassName"
       oc create -n events -f ../manifests/IngressWithoutClassName/
       ;;
+    3)
+      echo "Deploying for PodDisruptionBudgetAtLimit"
+      oc create -n events -f ../manifests/PodDisruptionBudgetAtLimit/
+      ;;
     all)
       echo "Deploying all"
       for i in $ALERTS;do oc create -n events -f ../manifests/$i/;done
