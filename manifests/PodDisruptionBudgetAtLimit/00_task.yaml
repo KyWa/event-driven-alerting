@@ -19,4 +19,4 @@ spec:
       echo "Alert Triggered for $(params.alertname) in the $(params.namespace) namespace!"
       echo ""
       echo "Patching PodDisruptionBudget $(params.pdbname) to prevent inability to perform cluster maintenance"
-      oc patch pdb -n $(params.namespace) $(params.pdbname) '{"spec":{"minAvailable":0}}' --type merge -p '{"spec":{"minAvailable":0}}' 2> /dev/null
+      oc patch pdb -n $(params.namespace) $(params.pdbname) --type merge -p '{"spec":{"minAvailable":0}}' 2> /dev/null
