@@ -15,8 +15,5 @@ roleRef:
   name: cluster-admin
 subjects:
 - kind: ServiceAccount
-  name: pipeline
-  namespace: events
-- kind: ServiceAccount
   name: pdb-admin
   namespace: events

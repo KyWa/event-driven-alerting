@@ -14,6 +14,8 @@ spec:
     metadata:
       generateName: pdb-fixer-
     spec:
+      taskRunTemplate:
+        serviceAccountName: pdb-admin
       pipelineRef:
         name: pdb-fixer
       params:
