@@ -1,0 +1,25 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: pdb-fixer
+spec:
+  params:
+  - name: alertname
+  - name: namespace
+  - name: pdbname
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1
+    kind: PipelineRun
+    metadata:
+      generateName: pdb-fixer-
+    spec:
+      pipelineRef:
+        name: pdb-fixer
+      params:
+      - name: alertname
+        value: "$(tt.params.alertname)"
+      - name: namespace
+        value: "$(tt.params.namespace)"
+      - name: pdbname
+        value: "$(tt.params.pdbname)"

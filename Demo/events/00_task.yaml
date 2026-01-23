@@ -1,0 +1,41 @@
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: pdb-fixer
+spec:
+  params:
+  - name: alertname
+    type: string
+  - name: namespace
+    type: string
+  - name: pdbname
+    type: string
+  steps:
+  - name: fix-pdb
+    image: image-registry.openshift-image-registry.svc:5000/openshift/cli
+    script: |
+      #!/usr/bin/env bash
+      curl -fsSL https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /tmp/jq && chmod +x /tmp/jq
+      JQ=$?
+      if [ ! $JQ -eq 0 ];then
+        echo "Failed to obtain JQ. Exiting."
+        exit
+      fi
+      PATH=$PATH:/tmp
+
+      echo "Alert Triggered for $(params.alertname) in the $(params.namespace) namespace!"
+      echo ""
+
+      ## Checks to ensure it is a misconfiguration and not just a crashing Pod(s)
+      PDB=`oc get pdb -n $(params.namespace) $(params.pdbname) -o jsonpath='{.spec}'`
+      PDB_MIN=`echo $PDB | jq -r '.minAvailable'`
+
+      if [[ "$PDB_MIN" > 0 ]];then
+        DEP_REPLICAS=$(oc get deploy -n $(params.namespace) -l `echo $PDB | jq -r '.selector.matchLabels | to_entries[0].key'`=`echo $PDB | jq -r '.selector.matchLabels | to_entries[0].value'` -o jsonpath='{.items[0].spec.replicas}' 2> /dev/null)
+      
+        if [[ "$PDB_MIN" == "$DEP_REPLICAS" ]];then
+          echo "Patching PodDisruptionBudget $(params.pdbname) to prevent inability to perform cluster maintenance"
+          oc patch pdb -n $(params.namespace) $(params.pdbname) --type merge -p '{"spec":{"minAvailable":0}}'
+        fi
+      fi

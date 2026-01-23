@@ -1,0 +1,19 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: Trigger
+metadata:
+  name: pdb-fixer
+spec:
+  serviceAccountName: pdb-admin
+  bindings:
+  - kind: TriggerBinding
+    ref: pdb-fixer
+  interceptors:
+  - params:
+    - name: "filter"
+      value: "body.alerts.exists(a, a.labels.alertname == 'PodDisruptionBudgetAtLimit')"
+    ref:
+      kind: ClusterInterceptor
+      name: cel
+  template:
+    ref: pdb-fixer
